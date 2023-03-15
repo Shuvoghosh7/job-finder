@@ -9,8 +9,8 @@ const initialState = {
     editing: {},
 };
 
-export const fetchJobs = createAsyncThunk('jobs/fetchJobs', async () => {
-    const jobs = await getJobs();
+export const fetchJobs = createAsyncThunk('jobs/fetchJobs', async (search) => {
+    const jobs = await getJobs(search);
     return jobs;
 })
 export const createJobs = createAsyncThunk('jobs/createJobs', async (data) => {

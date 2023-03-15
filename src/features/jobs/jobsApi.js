@@ -1,7 +1,11 @@
 import axios from "../../utils/axios";
 
-export const getJobs=async()=>{
-    const response=await axios.get('/jobs')
+export const getJobs=async(search)=>{
+    let queryString = "";
+    if (search !== "") {
+        queryString += `&q=${search}`;
+    }
+    const response=await axios.get(`/jobs/?${queryString}`)
     return response.data;
 }
 export const addJobs=async(data)=>{

@@ -10,11 +10,11 @@ const Jobs = () => {
     const { jobs, isLoading, isError} = useSelector(
         (state) => state.jobs
     );
-    const { type:selectedType } = useSelector((state) => state.filter);
+    const { type:selectedType,search } = useSelector((state) => state.filter);
 
     useEffect(()=>{
-        dispatch(fetchJobs())
-    },[dispatch])
+        dispatch(fetchJobs(search))
+    },[dispatch,search])
 
     const filterByType=job => {
         switch (selectedType) {
