@@ -1,9 +1,35 @@
-import React from 'react';
+import { useEffect } from "react";
+import { useDispatch,useSelector } from 'react-redux';
+import { fetchJobs } from "../../features/jobs/jobsSlice";
 import Sidebar from '../Sidebar/Sidebar';
 import JobItem from './JobItem';
 import Search from './Search';
 
 const Jobs = () => {
+    const dispatch=useDispatch()
+    const { jobs, isLoading, isError} = useSelector(
+        (state) => state.jobs
+    );
+    useEffect(()=>{
+        dispatch(fetchJobs())
+    },[dispatch])
+    
+    let content=null
+
+    if (isLoading) content = <p>Loading...</p>;
+
+    if (!isLoading && isError)
+        content = <p className="error">There was an error occured</p>;
+
+    if (!isLoading && !isError && jobs?.length > 0) {
+        content = jobs.map((job) => (
+            <JobItem key={job.id} job={job} />
+        ));
+    }
+
+    if (!isLoading && !isError && jobs?.length === 0) {
+        content = <p>No transactions found!</p>;
+    }
     return (
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 md:px-8 ">
             <div>
@@ -17,7 +43,7 @@ const Jobs = () => {
                     </div>
 
                     <div class="jobs-list">
-                        <JobItem/>
+                        {content}
                     </div>
                 </main>
             </div>

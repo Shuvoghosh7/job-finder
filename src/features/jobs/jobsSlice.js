@@ -1,0 +1,91 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { addJobs, editJobs, getJobs } from "./jobsApi";
+
+const initialState = {
+    jobs: [],
+    isLoading: false,
+    isError: false,
+    error: "",
+    editing: {},
+};
+
+export const fetchJobs = createAsyncThunk('jobs/fetchJobs', async () => {
+    const jobs = await getJobs();
+    return jobs;
+})
+export const createJobs = createAsyncThunk('jobs/createJobs', async (data) => {
+    const jobs = await addJobs(data);
+    return jobs;
+})
+export const changeJobs = createAsyncThunk('jobs/changeJobs', async ({id,data}) => {
+    const jobs = await editJobs(id,data);
+    return jobs;
+})
+
+const jobsSlice = createSlice({
+    name: "jobs",
+    initialState,
+    reducers:{
+        editActive: (state, action) => {
+            state.editing = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchJobs.pending,(state)=>{
+                state.isError=false;
+                state.isLoading=true
+
+            })
+            .addCase(fetchJobs.fulfilled,(state,action)=>{
+                state.isError=false;
+                state.isLoading=false;
+                state.jobs=action.payload;
+            })
+            .addCase(fetchJobs.rejected,(state,action)=>{
+                state.isLoading = false;
+                state.isError = true;
+                state.error = action.error?.message;
+                state.jobs=[]
+            })
+
+
+            .addCase(createJobs.pending,(state)=>{
+                state.isError=false;
+                state.isLoading=true
+            })
+            .addCase(createJobs.fulfilled,(state,action)=>{
+                state.isError=false;
+                state.isLoading=false;
+                state.jobs.push(action.payload)
+            })
+            .addCase(createJobs.rejected,(state,action)=>{
+                state.isLoading = false;
+                state.isError = true;
+                state.error = action.error?.message;
+            })
+
+
+            .addCase(changeJobs.pending,(state)=>{
+                state.isError=false;
+                state.isLoading=true
+            })
+            .addCase(changeJobs.fulfilled,(state,action)=>{
+                state.isError=false;
+                state.isLoading=false;
+                const indexToUpdate=state.jobs.findIndex(
+                    (t)=> t.id === action.payload.id
+                )
+                state.jobs[indexToUpdate]=action.payload
+            })
+            .addCase(changeJobs.rejected,(state,action)=>{
+                state.isLoading = false;
+                state.isError = true;
+                state.error = action.error?.message;
+            })
+
+    }
+})
+
+export default jobsSlice.reducer;
+export const { editActive} = jobsSlice.actions;
