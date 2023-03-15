@@ -10,10 +10,25 @@ const Jobs = () => {
     const { jobs, isLoading, isError} = useSelector(
         (state) => state.jobs
     );
+    const { type:selectedType } = useSelector((state) => state.filter);
+
     useEffect(()=>{
         dispatch(fetchJobs())
     },[dispatch])
+
+    const filterByType=job => {
+        switch (selectedType) {
+            case "Internship":
+                return job.type === selectedType;
+            case "Full Time":
+                return job.type === selectedType;
+            case "Remote":
+                return job.type === selectedType;    
+            default:
+                return true;
+        }
     
+    }
     let content=null
 
     if (isLoading) content = <p>Loading...</p>;
@@ -22,7 +37,7 @@ const Jobs = () => {
         content = <p className="error">There was an error occured</p>;
 
     if (!isLoading && !isError && jobs?.length > 0) {
-        content = jobs.map((job) => (
+        content = jobs.filter(filterByType).map((job) => (
             <JobItem key={job.id} job={job} />
         ));
     }

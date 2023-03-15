@@ -99,7 +99,7 @@ const EditJob = () => {
 
                         <div class="text-right">
                             <button type="submit" id="lws-submit" class="cursor-pointer btn btn-primary w-fit">
-                                Submit
+                                Update
                             </button>
                         </div>
                     </form>
